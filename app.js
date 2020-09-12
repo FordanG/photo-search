@@ -1,18 +1,29 @@
-const auth = "563492ad6f91700001000001bd7a4879872b4721840674c87328e74f"; //ADD THE AUTH KEY
+const auth = "563492ad6f91700001000001bd7a4879872b4721840674c87328e74f";
 const gallery = document.querySelector(".gallery");
 const searchInput = document.querySelector(".search-input");
 const form = document.querySelector(".search-form");
+const header = document.querySelector("header");
 let searchValue;
 const more = document.querySelector(".more");
 let page = 1;
 let fetchLink;
 let currentSearch;
+let searchInfo;
 
 //Event Listeners
 searchInput.addEventListener("input", updateInput);
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   if (searchValue) {
+    if (document.querySelector("header h2")) {
+      document.querySelector(
+        "header h2"
+      ).innerHTML = `Search results for: ${searchValue}`;
+    } else {
+      searchInfo = document.createElement("h2");
+      searchInfo.innerHTML = `Search results for: ${searchValue}`;
+      header.appendChild(searchInfo);
+    }
     currentSearch = searchValue;
     searchPhotos(searchValue);
   }
@@ -55,7 +66,6 @@ function generatePictures(data) {
 async function curatedPhotos() {
   fetchLink = "https://api.pexels.com/v1/curated?per_page=15&page=1";
   const data = await fetchApi(fetchLink);
-
   generatePictures(data);
 }
 
@@ -63,12 +73,14 @@ async function searchPhotos(query) {
   clear();
   fetchLink = `https://api.pexels.com/v1/search?query=${query}+query&per_page=15&page=1`;
   const data = await fetchApi(fetchLink);
+
   generatePictures(data);
 }
 
 function clear() {
   gallery.innerHTML = "";
   searchInput.value = "";
+  searchValue = "";
 }
 
 async function loadMore() {
